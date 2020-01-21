@@ -1,1 +1,14 @@
-style
+.box{
+    height: 50px;
+    width: 50px;
+    border: solid black 2px;
+}
+.row{
+    display: flex;
+}
+.container{
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+}
