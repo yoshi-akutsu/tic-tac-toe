@@ -1,12 +1,13 @@
 const game = (() => {
     const board = ["","","","","","","","",""];
-    const turn = [];
+    const turn = ["", ""];
     const score = [0, 0];
     const newGame = () => {
         document.querySelectorAll(".box").forEach(box => {
             box.textContent = "";
             box.classList.remove("clicked");
-            turn.splice(0, turn.length);
+            box.classList.remove("finished");
+            turn.splice(0, turn.length - 2);
             for (let i = 0; i < board.length; i++){
                 board[i] = "";
             }
@@ -50,9 +51,12 @@ const game = (() => {
         }
         return score;
     }
-    
+    const robotTurn = (board) => {
 
-    return { board, turn, newGame, updateBoard, checkWinner, changeTurn, changeScore };
+        return [robotPos, robotMarker]
+    }
+    
+    return { board, turn, newGame, updateBoard, checkWinner, changeTurn, changeScore, robotTurn };
 })();
 
 const domPrinter = (() => {
@@ -64,7 +68,7 @@ const domPrinter = (() => {
     }
     const printWinner = (winner) =>{
         const scoreboard = document.getElementById("scoreboard");
-        scoreboard.textContent = winner;
+        scoreboard.textContent = winner[0] + " : " + winner[1];
     }
 
     return { printBoard, printWinner }
@@ -77,10 +81,56 @@ const makePlayer = (name, marker) => {
 }
 
 // Main
-const player1 = makePlayer("Player 1", "o");
-const player2 = makePlayer("Player 2", "x");
+
+let player1;
+let player2;
+
+const robot = document.getElementById("robot");
+const form1 = document.getElementById("person1");
+const form2 = document.getElementById("person2");
+const name1 = document.getElementById("name1");
+const name2 = document.getElementById("name2");
+
+robot.addEventListener("change", () => {
+    if (robot.checked === true){
+        form2.textContent = "Mr. Robot";
+        form2.disabled = true;
+    }
+    else {
+        form2.textContent = "";
+        form2.disabled = false;
+    }
+
+})
+
+const startButton = document.getElementById("start");
+startButton.addEventListener("click", () => {
+    let playerName1 = form1.value;
+    let playerName2;
+    if (robot.checked === true){
+        playerName2 = "Mr. Robot"
+    }
+    else {
+        playerName2 = form2.value;
+    }
+    if (playerName1 === ""){
+        playerName1 = "Player 1";
+    }   
+    if (playerName2 === "") {
+        playerName2 = "Player 2";
+    }
+
+    player1 = makePlayer(playerName1, "o");
+    player2 = makePlayer(playerName2, "x");
+    name1.textContent = player1.returnName();
+    name2.textContent = player2.returnName();
+    form1.disabled = true;
+    form2.disabled = true;
+    robot.disabled = true;
+});
 
 game.newGame();
+
 
 const boxes = document.querySelectorAll(".box");
 boxes.forEach(box => {
@@ -90,13 +140,23 @@ boxes.forEach(box => {
             domPrinter.printBoard(game.updateBoard(box.id, player1.returnMarker()));
         }
         else{
-            game.changeTurn();
-            domPrinter.printBoard(game.updateBoard(box.id, player2.returnMarker()));
+            if (form2.textContent === "Mr. Robot"){
+                game.changeTurn();
+                domPrinter.printBoard(game.updateBoard(robotTurn(board)[0], robotTurn(board)[1]));
+            }
+            else{
+                game.changeTurn();
+                domPrinter.printBoard(game.updateBoard(box.id, player2.returnMarker()));
+            }
         }
         if(game.checkWinner()[0]) {
-            domPrinter.printWinner(game.changeScore());
-            game.changeScore(game.checkWinner()[1]);
-          
+            if (box.classList.contains("finished")){
+            }
+            else {
+                game.changeScore(game.checkWinner()[1]);
+                domPrinter.printWinner(game.changeScore());
+                boxes.forEach(box => box.classList.add("finished"));
+            }
         }
     })
 })
