@@ -1,14 +1,39 @@
-.box{
-    height: 50px;
-    width: 50px;
-    border: solid black 2px;
+header {
+    text-align: center;
 }
-.row{
+body {
+    text-align: center;
+}
+.row {
     display: flex;
 }
-.container{
-    width: 150px;
-    height: 150px;
+.container {
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+#scoreboard {
+    font-size: x-large;
+    color: gray;
+}
+.box {
+    height: 100px;
+    width: 100px;
+    border-bottom: solid black 2px;
+    border-left: solid black 2px;
+    text-align: center;
+    font-size: 80px;
+    line-height: 100px;
+}
+.box.left {
+    border-left: none;
+}
+.box.bot {
+    border-bottom: none;
+}
+#playagain {
+    margin-bottom: 2rem;
+}
+.player{
+    padding: 4rem;
 }
